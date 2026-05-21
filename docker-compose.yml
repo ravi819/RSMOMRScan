@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: omr-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: omr_system
+
+  omr-engine:
+    build: ./omr-engine
+    container_name: omr-engine
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./omr-engine:/app
+      - omr-uploads:/app/uploads
+
+  backend:
+    build: ./backend
+    container_name: omr-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/omr_system
+      OMR_ENGINE_URL: http://omr-engine:8000
+      JWT_SECRET: change_this_in_production_to_a_long_random_string
+      PORT: 5000
+      NODE_ENV: production
+    depends_on:
+      - mongodb
+      - omr-engine
+    volumes:
+      - backend-uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: omr-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
+  omr-uploads:
+  backend-uploads:

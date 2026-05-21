@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.env
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+venv/
+uploads/
+backend/uploads/
+omr-engine/uploads/
+samples/sample_sheet.png
+samples/sample_sheet_key.json
+.vscode/
+.idea/
